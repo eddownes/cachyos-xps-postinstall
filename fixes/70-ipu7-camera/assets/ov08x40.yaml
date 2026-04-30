@@ -1,0 +1,15 @@
+# SPDX-License-Identifier: CC0-1.0
+# Tuning file for OmniVision OV08X40.
+%YAML 1.1
+---
+version: 1
+algorithms:
+  - BlackLevel:
+      r: 16
+      gr: 16
+      gb: 16
+      b: 16
+  - Awb:
+  - Adjust:
+  - Agc:
+...

@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+for dev in /sys/bus/i2c/drivers/i2c_hid_acpi/i2c-*; do
+  [[ -e "$dev" ]] || continue
+  i2c_device=$(basename "$dev")
+  echo "Resetting $i2c_device via i2c_hid_acpi unbind/rebind..."
+  echo "$i2c_device" | sudo tee /sys/bus/i2c/drivers/i2c_hid_acpi/unbind >/dev/null
+  sleep 1
+  echo "$i2c_device" | sudo tee /sys/bus/i2c/drivers/i2c_hid_acpi/bind >/dev/null
+done
+
+if lsmod | grep -q '^intel_quicki2c'; then
+  echo "Reloading intel_quicki2c..."
+  sudo modprobe -r intel_quicki2c
+  sudo modprobe intel_quicki2c
+fi

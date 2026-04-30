@@ -1,0 +1,44 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle >/dev/null
+
+if pactl get-source-mute @DEFAULT_SOURCE@ | grep -q 'yes'; then
+  alsa_value='off,off'
+  osd_message='Microphone muted'
+else
+  alsa_value='on,on'
+  osd_message='Microphone on'
+fi
+
+if [[ -e /sys/class/leds/platform::micmute/brightness ]]; then
+  default_source=$(pactl get-default-source)
+  alsa_card=$(
+    pactl -f json list sources |
+      jq -r --arg source "$default_source" '
+        .[] | select(.name == $source) |
+        .properties["alsa.card"] // .properties["api.alsa.card"] // .properties["api.alsa.pcm.card"] // empty
+      ' |
+      head -n 1
+  )
+
+  if [[ -n "$alsa_card" ]]; then
+    cards=("$alsa_card")
+  else
+    mapfile -t cards < <(find /proc/asound -maxdepth 1 -type d -name 'card*' -printf '%f\n' | sed 's/card//' | sort -u)
+  fi
+
+  for card in "${cards[@]}"; do
+    while IFS= read -r control; do
+      [[ "$control" == *"Jack Microphone"* ]] && continue
+      amixer -c "$card" cset "$control" "$alsa_value" >/dev/null 2>&1 || true
+      break 2
+    done < <(amixer -c "$card" controls 2>/dev/null | grep -o "name='[^']*Microphone Capture Switch'")
+  done
+fi
+
+if command -v notify-send >/dev/null 2>&1; then
+  notify-send "$osd_message" >/dev/null 2>&1 || true
+else
+  printf '%s\n' "$osd_message"
+fi
