@@ -82,6 +82,7 @@ PrivateNetwork=no
 InaccessibleDirectories=
 ReadOnlyDirectories=
 DevicePolicy=auto
+DeviceAllow=char-intel-ipu7-psys
 ExecStartPost=/bin/bash -c 'sleep 2 && systemctl --user -M ${uid}@ restart wireplumber.service 2>/dev/null || true'
 EOF
   install_asset "$SCRIPT_DIR/assets/camera-tmpfiles.conf" /usr/lib/tmpfiles.d/camera.conf

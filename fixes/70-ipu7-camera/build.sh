@@ -26,7 +26,7 @@ header_pkg="${pkgbase}-headers"
 
 build_root=${CACHY_XPS_CAMERA_BUILD_ROOT:-/var/tmp/cachyos-xps-camera-build}
 repo_url=${CACHY_XPS_OMARCHY_PKGS_URL:-https://github.com/omacom-io/omarchy-pkgs.git}
-repo_ref=${CACHY_XPS_OMARCHY_PKGS_REF:-main}
+repo_ref=${CACHY_XPS_OMARCHY_PKGS_REF:-master}
 repo_dir="$build_root/omarchy-pkgs"
 
 install_packages git base-devel dkms "$header_pkg" cmake autoconf automake libtool pkgconf jsoncpp libdrm \
@@ -57,8 +57,8 @@ build_pkg() {
   (cd "$work_dir" && makepkg -si --noconfirm)
 }
 
-if [[ -d "$repo_dir/pkgbuilds/edge/v4l2-relayd" ]] && ! pacman -Q v4l2-relayd >/dev/null 2>&1; then
-  build_pkg v4l2-relayd "$repo_dir/pkgbuilds/edge/v4l2-relayd"
+if [[ -d "$repo_dir/pkgbuilds/v4l2-relayd" ]] && ! pacman -Q v4l2-relayd >/dev/null 2>&1; then
+  build_pkg v4l2-relayd "$repo_dir/pkgbuilds/v4l2-relayd"
 fi
 
-build_pkg intel-ipu7-camera "$repo_dir/pkgbuilds/edge/intel-ipu7-camera"
+build_pkg intel-ipu7-camera "$repo_dir/pkgbuilds/intel-ipu7-camera"

@@ -55,6 +55,41 @@ detected. For `apply` mode, pass:
 The camera build must run as a normal user, not root. The script uses `sudo` only
 for package installation and system file writes.
 
+### Panther Lake IPU7 fixes (module load order + psys permissions)
+
+On XPS 16 (Panther Lake) systems the camera can build and install cleanly but
+still not work, in two ways that are fixed by this module:
+
+1. **Black/frozen frames, `intel-ipu7 0000:00:05.0: no subdev found in graph`
+   in `dmesg`.** `intel_ipu7` (the PCI driver) auto-loads via ordinary PCI
+   hotplug early in boot, before `ov08x40` (loaded later by
+   `camera-init.service`, after `intel_cvs` hands over ACPI camera ownership)
+   registers its async v4l2 subdev. `intel_ipu7`'s one-shot sensor scan
+   completes with zero sensors matched and never retries. Fixed by
+   blacklisting `intel_ipu7` (`assets/camera-deps.conf`) and having
+   `camera-init.service` modprobe it explicitly, after `ov08x40`:
+   `intel_cvs → ov08x40 → intel_ipu7 → v4l2loopback`.
+
+2. **Sensor registers fine, but frames from `v4l2-relayd@ipu7` are solid
+   black.** `journalctl -u v4l2-relayd@ipu7.service` shows
+   `PSysDevice: Failed to open psys device Operation not permitted`. The
+   `v4l2-relayd@.service` unit's cgroup device allowlist has
+   `DeviceAllow=char-psys`, but the real udev subsystem for
+   `/dev/ipu7-psys0` on IPU7 is `intel-ipu7-psys`, not `psys` — so the
+   kernel's device-cgroup filter silently rejects the `open()` even though
+   the device node itself is world-writable. Fixed by adding
+   `DeviceAllow=char-intel-ipu7-psys` to the `v4l2-relayd@ipu7.service.d`
+   override this module installs.
+
+**If frames still look black/frozen right after applying this fix**, don't
+trust a quick single-frame test (`v4l2-ctl --stream-count=1`) —
+`v4l2-relayd` lazily starts the real camera pipeline only once a client
+holds the loopback device open for a sustained period, and silently serves
+an internal placeholder image (visible as `dataurisrc`/`imagefreeze` threads
+under `ps -T <pid>`) until then. Test with a real app (Cheese, a browser) or
+a longer capture (`v4l2-ctl --stream-count=60 ...`) before concluding the
+pipeline is broken.
+
 ## Safety
 
 - The toolkit refuses `apply` and `install` on non-CachyOS systems.
