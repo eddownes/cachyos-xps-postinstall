@@ -9,10 +9,10 @@ full installer or replacing CachyOS system ownership.
 > carrying additional Panther Lake IPU7 camera fixes (see
 > [Panther Lake IPU7 fixes](#panther-lake-ipu7-fixes-module-load-order--psys-permissions)
 > below) not yet in upstream. This toolkit itself is CachyOS/Arch-specific;
-> for Pop!_OS Cosmic 24.04 see
-> [`popos-cosmic-24.04/`](popos-cosmic-24.04/README.md) (experimental,
-> unverified on real hardware). Fedora hasn't been attempted — see that
-> directory's README for why.
+> for Pop!_OS Cosmic 24.04 see the separate
+> [`popos-panther-lake-ipu7-camera`](https://github.com/eddownes/popos-panther-lake-ipu7-camera)
+> repo (experimental, unverified on real hardware). Fedora hasn't been
+> attempted — see that repo's README for why.
 
 ## Fresh install
 
