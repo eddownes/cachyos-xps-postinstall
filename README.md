@@ -4,6 +4,24 @@ This is a CachyOS-first post-install toolkit for Dell XPS Panther Lake systems.
 It ports the useful Omarchy hardware enablement work without running Omarchy's
 full installer or replacing CachyOS system ownership.
 
+> This is [eddownes](https://github.com/eddownes)'s fork of
+> [spencerbull/cachyos-xps-postinstall](https://github.com/spencerbull/cachyos-xps-postinstall),
+> carrying additional Panther Lake IPU7 camera fixes (see
+> [Panther Lake IPU7 fixes](#panther-lake-ipu7-fixes-module-load-order--psys-permissions)
+> below) not yet in upstream.
+
+## Fresh install
+
+```bash
+git clone https://github.com/eddownes/cachyos-xps-postinstall.git
+cd cachyos-xps-postinstall
+./install.sh --yes --build-camera
+```
+
+`--build-camera` is required to get a working IPU7 camera (see
+[Camera Build](#camera-build) below); everything else in `install.sh --yes`
+applies without extra flags.
+
 ## Usage
 
 Audit only:
