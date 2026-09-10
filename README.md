@@ -8,11 +8,15 @@ full installer or replacing CachyOS system ownership.
 > [spencerbull/cachyos-xps-postinstall](https://github.com/spencerbull/cachyos-xps-postinstall),
 > carrying additional Panther Lake IPU7 camera fixes (see
 > [Panther Lake IPU7 fixes](#panther-lake-ipu7-fixes-module-load-order--psys-permissions)
-> below) not yet in upstream. This toolkit itself is CachyOS/Arch-specific;
-> for Pop!_OS Cosmic 24.04 see the separate
+> below) not yet in upstream. This toolkit itself is CachyOS/Arch-specific.
+> For other distros, each uses a genuinely different architecture (see
+> each repo's README for why) and none are verified on real hardware yet:
 > [`popos-panther-lake-ipu7-camera`](https://github.com/eddownes/popos-panther-lake-ipu7-camera)
-> repo (experimental, unverified on real hardware). Fedora hasn't been
-> attempted — see that repo's README for why.
+> (Pop!_OS Cosmic 24.04, same hardware-ISP pipeline as this repo),
+> [`ubuntu2604-panther-lake-ipu7-camera`](https://github.com/eddownes/ubuntu2604-panther-lake-ipu7-camera)
+> (Ubuntu 26.04, libcamera software ISP instead), and
+> [`fedora44-panther-lake-ipu7-camera`](https://github.com/eddownes/fedora44-panther-lake-ipu7-camera)
+> (Fedora 44, also software ISP).
 
 ## Fresh install
 
