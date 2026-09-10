@@ -8,7 +8,11 @@ full installer or replacing CachyOS system ownership.
 > [spencerbull/cachyos-xps-postinstall](https://github.com/spencerbull/cachyos-xps-postinstall),
 > carrying additional Panther Lake IPU7 camera fixes (see
 > [Panther Lake IPU7 fixes](#panther-lake-ipu7-fixes-module-load-order--psys-permissions)
-> below) not yet in upstream.
+> below) not yet in upstream. This toolkit itself is CachyOS/Arch-specific;
+> for Pop!_OS Cosmic 24.04 see
+> [`popos-cosmic-24.04/`](popos-cosmic-24.04/README.md) (experimental,
+> unverified on real hardware). Fedora hasn't been attempted — see that
+> directory's README for why.
 
 ## Fresh install
 
