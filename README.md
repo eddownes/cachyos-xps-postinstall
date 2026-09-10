@@ -114,3 +114,10 @@ pipeline is broken.
 - Existing files are backed up under `/var/backups/cachyos-xps-fixes`.
 - Firmware updates are listed by default, not applied.
 - Bootloader changes go through systemd-boot, GRUB, or Limine regeneration paths.
+
+## License
+
+MIT, see [LICENSE](LICENSE) — covers this fork's own changes. Upstream
+(`spencerbull/cachyos-xps-postinstall`) does not carry a license file, so
+the original code retains whatever rights its author holds by default;
+this license does not purport to relicense their work.
