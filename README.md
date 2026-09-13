@@ -107,6 +107,31 @@ still not work, in two ways that are fixed by this module:
    `DeviceAllow=char-intel-ipu7-psys` to the `v4l2-relayd@ipu7.service.d`
    override this module installs.
 
+3. **Even with the `char-intel-ipu7-psys` fix installed, the very first
+   camera start right after boot can still log
+   `PSysDevice: Failed to open psys device Operation not permitted`, and a
+   plain `systemctl restart v4l2-relayd@ipu7.service` (with no config
+   change) clears it for the rest of the session.** `camera-init.service`
+   and `v4l2-relayd@ipu7.service` are deliberately left disabled from boot
+   targets and started together on demand by `intel-ipu7-camera.service`'s
+   `systemctl start --no-block camera-init.service v4l2-relayd@ipu7.service`
+   at `graphical.target`. That means `camera-init.service`'s modprobe chain
+   (which creates `/dev/ipu7-psys0`) and `v4l2-relayd@ipu7.service`'s own
+   startup (which is when systemd computes that unit's cgroup device
+   allowlist from the current udev database) happen only a second or two
+   apart — occasionally too soon for udev to have finished tagging the new
+   device node. The device-cgroup filter is computed once, at that unit's
+   own activation; ordering after `camera-init.service` isn't enough because
+   `camera-init.service`'s `ExecStart` returns as soon as the `modprobe`
+   calls return, not once udev has caught up. Fixed by appending
+   `udevadm settle` to the end of `camera-init.service`'s `ExecStart` chain,
+   so `v4l2-relayd@ipu7.service` never starts until the psys device's udev
+   processing is guaranteed complete. (A `systemd-udev-settle.service`
+   unit dependency was considered instead, but that unit only runs once,
+   early in boot, and is long since finished by the time these on-demand
+   units start — an `After=`/`Wants=` on it here would be a no-op; only a
+   live `udevadm settle` call at the right point in the sequence works.)
+
 **If frames still look black/frozen right after applying this fix**, don't
 trust a quick single-frame test (`v4l2-ctl --stream-count=1`) —
 `v4l2-relayd` lazily starts the real camera pipeline only once a client
